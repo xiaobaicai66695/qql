@@ -1,13 +1,22 @@
 package svc
 
-import "qql/apps/user/rpc/internal/config"
+import (
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"qql/apps/user/models"
+	"qql/apps/user/rpc/internal/config"
+)
 
 type ServiceContext struct {
 	Config config.Config
+
+	UserModels models.UsersModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	sqlConn := sqlx.NewMysql(c.Mysql.DataSource)
 	return &ServiceContext{
 		Config: c,
+
+		UserModels: models.NewUsersModel(sqlConn, c.Cache),
 	}
 }
