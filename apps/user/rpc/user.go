@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-
 	"qql/apps/user/rpc/internal/config"
 	"qql/apps/user/rpc/internal/server"
 	"qql/apps/user/rpc/internal/svc"
 	"qql/apps/user/rpc/user"
+	"qql/pkg/interceptor/rpcserver"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -32,6 +32,7 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
+	s.AddUnaryInterceptors(rpcserver.LogInterceptor)
 	defer s.Stop()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
