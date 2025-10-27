@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"qql/apps/user/rpc/internal/config"
-	"qql/apps/user/rpc/internal/server"
-	"qql/apps/user/rpc/internal/svc"
-	"qql/apps/user/rpc/user"
-	"qql/pkg/interceptor/rpcserver"
+
+	"qql/apps/social/rpc/internal/config"
+	"qql/apps/social/rpc/internal/server"
+	"qql/apps/social/rpc/internal/svc"
+	"qql/apps/social/rpc/social"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/dev/user.yaml", "the config file")
+var configFile = flag.String("f", "etc/dev/social.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -26,13 +26,12 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		user.RegisterUserServer(grpcServer, server.NewUserServer(ctx))
+		social.RegisterSocialServer(grpcServer, server.NewSocialServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}
 	})
-	s.AddUnaryInterceptors(rpcserver.LogInterceptor)
 	defer s.Stop()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
