@@ -27,6 +27,7 @@ var (
 type (
 	friendsModel interface {
 		Insert(ctx context.Context, data *Friends) (sql.Result, error)
+		Inserts(ctx context.Context,session sqlx.Session ,data ...*Friends) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*Friends, error)
 		FindByUidAndFid(ctx context.Context, uid ,fid string) (*Friends, error)
 		Update(ctx context.Context, data *Friends) error
@@ -106,7 +107,29 @@ func (m *defaultFriendsModel) Insert(ctx context.Context, data *Friends) (sql.Re
 	return ret, err
 }
 
-func (m *defaultFriendsModel) Update(ctx context.Context, data *Friends) error {
+func (m *defaultFriendsModel) Inserts(ctx context.Context,session sqlx.Session ,data ...*Friends) (sql.Result, error) {
+	var (
+		sql strings.Builder
+		args []any
+	)
+
+	if len(data) == 0{
+		return nil, nil
+	}
+
+	sql.WriteString(fmt.Sprintf("insert into %s (%s) values ", m.table, friendsRowsExpectAutoSet))
+
+	for i, v := range data{
+		sql.WriteString("(?, ?, ?, ?)")
+		args = append(args, v.UserId, v.FriendUid, v.Remark, v.AddSource)
+		if i != len(data)-1 {
+			sql.WriteString(", ")
+		}
+	}
+	return session.ExecCtx(ctx, sql.String(), args...)
+}
+
+func (m *defaultFriendsModel) Update(ctx context.Context,session sqlx.Session, data *Friends) error {
 	friendsIdKey := fmt.Sprintf("%s%v", cacheFriendsIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, friendsRowsWithPlaceHolder)
