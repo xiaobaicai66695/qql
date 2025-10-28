@@ -78,7 +78,7 @@ func (m *defaultFriendRequestsModel) FindOne(ctx context.Context, id int64) (*Fr
 	friendRequestsIdKey := fmt.Sprintf("%s%v", cacheFriendRequestsIdPrefix, id)
 	var resp FriendRequests
 	err := m.QueryRowCtx(ctx, &resp, friendRequestsIdKey, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
-		query := fmt.Sprintf("select %s from %s where `req_uid` = ? limit 1", friendRequestsRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", friendRequestsRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -112,7 +112,7 @@ func (m *defaultFriendRequestsModel) FindByReqUidAndUserId(ctx context.Context, 
 	query := fmt.Sprintf("select %s from %s where `req_uid` = ? and `user_id` = ?", friendRequestsRows, m.table)
 
 	var resp FriendRequests
-	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, rid, uid)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, rid, uid)
 	switch err {
 	case nil:
 		return &resp, nil
