@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"qql/apps/im/immodels"
 	"qql/apps/im/ws/internal/config"
 )
 
