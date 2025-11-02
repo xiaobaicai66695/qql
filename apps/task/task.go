@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
-	"qql/apps/task/handler"
-	"qql/apps/task/handler/svc"
 	"qql/apps/task/internal/config"
+	"qql/apps/task/internal/handler"
+	"qql/apps/task/internal/svc"
 )
 
 var configFile = flag.String("f", "etc/dev/task.yaml", "the config file")

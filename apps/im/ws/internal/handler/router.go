@@ -6,6 +6,8 @@
 package handler
 
 import (
+	"qql/apps/im/ws/internal/handler/conversation"
+	"qql/apps/im/ws/internal/handler/push"
 	"qql/apps/im/ws/internal/handler/user"
 	"qql/apps/im/ws/internal/svc"
 	"qql/apps/im/ws/websocket"

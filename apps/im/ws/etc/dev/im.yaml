@@ -6,7 +6,7 @@ JwtAuth:
 
 Mongo:
   Url: "mongodb://root:easy-chat@127.0.0.1:27017"
-  Db: easy-chat
+  Db: qql
 
 MsgChatTransfer:
   Topic: msgChatTransfer
