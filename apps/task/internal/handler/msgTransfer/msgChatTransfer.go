@@ -37,6 +37,7 @@ func (m *MsgChatTransfer) Consume(c context.Context, key, value string) error {
 	if err := m.addChatLog(ctx, &data); err != nil {
 		return err
 	}
+
 	return m.svc.WsClient.Send(websocket.Message{
 		FrameType: websocket.FrameData,
 		Method:    "push",

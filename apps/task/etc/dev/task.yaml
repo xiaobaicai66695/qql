@@ -11,12 +11,12 @@ MsgChatTransfer:
   Consumers: 1
 
 Redisx:
-  Host: 127.0.0.1:16379
+  Host: 127.0.0.1:6379
   Type: node
   Pass: "210618"
 
 Mongo:
-  Url: "mongodb://root:210618@127.0.0.1:27017"
+  Url: "mongodb://127.0.0.1:27017"
   Db: qql
 
 Ws:

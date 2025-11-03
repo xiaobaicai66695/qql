@@ -13,9 +13,9 @@ type Config struct {
 		DataSource string
 	}
 
-	Cache cache.CacheConf
-
 	Redisx redis.RedisConf
+
+	Cache cache.CacheConf
 
 	Jwt struct {
 		AccessSecret string
