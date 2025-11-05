@@ -3,7 +3,7 @@ package svc
 import (
 	"qql/apps/im/immodels"
 	"qql/apps/im/ws/internal/config"
-	"qql/apps/task/mqclient"
+	"qql/apps/task/mq/mqclient"
 )
 
 type ServiceContext struct {

@@ -5,7 +5,7 @@ import (
 	"qql/apps/im/ws/internal/svc"
 	"qql/apps/im/ws/websocket"
 	"qql/apps/im/ws/ws"
-	"qql/apps/task/mq"
+	"qql/apps/task/mq/mq"
 	"qql/pkg/constants"
 	"time"
 )
