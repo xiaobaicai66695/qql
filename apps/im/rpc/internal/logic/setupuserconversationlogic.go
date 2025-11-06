@@ -5,12 +5,11 @@ import (
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"qql/apps/im/immodels"
-	"qql/pkg/constants"
-	"qql/pkg/wuid"
-	"qql/pkg/xerr"
-
 	"qql/apps/im/rpc/im"
 	"qql/apps/im/rpc/internal/svc"
+	"qql/apps/pkg/constants"
+	"qql/apps/pkg/wuid"
+	"qql/pkg/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -66,6 +65,13 @@ func (l *SetUpUserConversationLogic) SetUpUserConversation(in *im.SetUpUserConve
 		if err != nil {
 			return nil, err
 		}
+	case status.GroupChatType:
+		err := l.setUpUserConversation(in.RecvId, in.SendId, in.RecvId, status.GroupChatType, true)
+		if err != nil {
+			return nil, err
+		}
+	default:
+
 	}
 
 	return &res, nil

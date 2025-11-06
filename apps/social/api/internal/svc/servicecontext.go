@@ -1,23 +1,38 @@
 package svc
 
 import (
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
+	"qql/apps/im/rpc/imclient"
 	"qql/apps/social/api/internal/config"
+	"qql/apps/social/api/internal/middleware"
 	"qql/apps/social/rpc/socialclient"
 	"qql/apps/user/rpc/userclient"
+	"qql/pkg/interceptor"
 )
 
 type ServiceContext struct {
-	Config config.Config
-
+	Config                config.Config
+	IdempotenceMiddleware rest.Middleware
 	socialclient.Social
 	userclient.User
+	imclient.Im
+
+	*redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config: c,
-		Social: socialclient.NewSocial(zrpc.MustNewClient(c.SocialRpc)),
-		User:   userclient.NewUser(zrpc.MustNewClient(c.UserRpc)),
+		Config:                c,
+		IdempotenceMiddleware: middleware.NewIdempotenceMiddleware().Handler,
+		Social: socialclient.NewSocial(zrpc.MustNewClient(c.SocialRpc,
+			// 重试 + 幂等
+			//zrpc.WithDialOption(grpc.WithDefaultServiceConfig()),
+			zrpc.WithUnaryClientInterceptor(interceptor.DefaultIdempotentClient),
+		)),
+		User:  userclient.NewUser(zrpc.MustNewClient(c.UserRpc)),
+		Im:    imclient.NewIm(zrpc.MustNewClient(c.ImRpc)),
+		Redis: redis.MustNewRedis(c.Redisx),
 	}
 }

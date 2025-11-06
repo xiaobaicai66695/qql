@@ -4,11 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"qql/pkg/resultx"
-
+	"qql/apps/pkg/resultx"
 	"qql/apps/social/api/internal/config"
 	"qql/apps/social/api/internal/handler"
 	"qql/apps/social/api/internal/svc"
+	resultx2 "qql/pkg/resultx"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
@@ -28,7 +28,7 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 
-	httpx.SetErrorHandlerCtx(resultx.ErrHandler(c.Name))
+	httpx.SetErrorHandlerCtx(resultx2.ErrHandler(c.Name))
 	httpx.SetOkHandler(resultx.OkHandler)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)

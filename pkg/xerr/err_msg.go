@@ -1,14 +1,14 @@
 package xerr
 
 var codeText = map[int]string{
-	SERVER_COMMON_ERROR: "服务器异常，请稍后尝试",
-	REQUEST_PARAM_ERROR: "请求参数有误",
-	DB_ERROR:            "数据库繁忙，请稍后尝试",
+	ServerCommonError: "server fatal, try again later",
+	RequestParamError: "params wrong",
+	DbError:           "database busy, try again later",
 }
 
-func ErrMsg(errcode int) string {
-	if msg, ok := codeText[errcode]; ok {
+func ErrMsg(code int) string {
+	if msg, ok := codeText[code]; ok {
 		return msg
 	}
-	return codeText[SERVER_COMMON_ERROR]
+	return codeText[ServerCommonError]
 }

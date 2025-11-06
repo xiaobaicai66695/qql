@@ -5,10 +5,9 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"qql/apps/im/immodels"
-	"qql/pkg/xerr"
-
 	"qql/apps/im/rpc/im"
 	"qql/apps/im/rpc/internal/svc"
+	"qql/pkg/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

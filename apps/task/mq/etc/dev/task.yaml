@@ -19,5 +19,11 @@ Mongo:
   Url: "mongodb://127.0.0.1:27017"
   Db: qql
 
+SocialRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: social.rpc
+
 Ws:
   Host: 127.0.0.1:10090

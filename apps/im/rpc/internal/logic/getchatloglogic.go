@@ -3,10 +3,9 @@ package logic
 import (
 	"context"
 	"github.com/pkg/errors"
-	"qql/pkg/xerr"
-
 	"qql/apps/im/rpc/im"
 	"qql/apps/im/rpc/internal/svc"
+	"qql/pkg/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

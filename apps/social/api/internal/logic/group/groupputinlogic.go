@@ -2,6 +2,10 @@ package group
 
 import (
 	"context"
+	"qql/apps/im/rpc/imclient"
+	"qql/apps/social/rpc/social"
+	"qql/pkg/ctxdata"
+	"qql/pkg/status"
 
 	"qql/apps/social/api/internal/svc"
 	"qql/apps/social/api/internal/types"
@@ -25,6 +29,26 @@ func NewGroupPutInLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GroupP
 
 func (l *GroupPutInLogic) GroupPutIn(req *types.GroupPutInRep) (resp *types.GroupPutInResp, err error) {
 	// todo: add your logic here and delete this line
+	uid := ctxdata.GetUId(l.ctx)
+	res, err := l.svcCtx.Social.GroupPutin(l.ctx, &social.GroupPutinReq{
+		GroupId:    req.GroupId,
+		ReqId:      uid,
+		ReqMsg:     req.ReqMsg,
+		ReqTime:    req.ReqTime,
+		JoinSource: int32(req.JoinSource),
+		InviterUid: req.IviterUid,
+	})
+	if err != nil {
+		return
+	}
+	if res.GroupId == "" {
+		return
+	}
+	_, err = l.svcCtx.SetUpUserConversation(l.ctx, &imclient.SetUpUserConversationReq{
+		SendId:   uid,
+		RecvId:   res.GroupId,
+		ChatType: int32(status.GroupChatType),
+	})
 
 	return
 }

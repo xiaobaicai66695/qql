@@ -24,7 +24,7 @@ const (
 // model
 type Friends struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	Remark        string                 `protobuf:"bytes,3,opt,name=remark,proto3" json:"remark,omitempty"`
 	AddSource     int32                  `protobuf:"varint,4,opt,name=addSource,proto3" json:"addSource,omitempty"` // 添加来源
@@ -63,11 +63,11 @@ func (*Friends) Descriptor() ([]byte, []int) {
 	return file_apps_social_rpc_social_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Friends) GetId() int32 {
+func (x *Friends) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *Friends) GetUserId() string {
@@ -100,12 +100,13 @@ func (x *Friends) GetFriendUid() string {
 
 type FriendRequests struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	ReqUid        string                 `protobuf:"bytes,3,opt,name=reqUid,proto3" json:"reqUid,omitempty"`
 	ReqMsg        string                 `protobuf:"bytes,4,opt,name=reqMsg,proto3" json:"reqMsg,omitempty"`
 	ReqTime       int64                  `protobuf:"varint,5,opt,name=reqTime,proto3" json:"reqTime,omitempty"`
 	HandleResult  int32                  `protobuf:"varint,6,opt,name=handleResult,proto3" json:"handleResult,omitempty"` // 处理结果
+	HandleMsg     string                 `protobuf:"bytes,7,opt,name=handleMsg,proto3" json:"handleMsg,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -140,11 +141,11 @@ func (*FriendRequests) Descriptor() ([]byte, []int) {
 	return file_apps_social_rpc_social_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *FriendRequests) GetId() int32 {
+func (x *FriendRequests) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *FriendRequests) GetUserId() string {
@@ -180,6 +181,13 @@ func (x *FriendRequests) GetHandleResult() int32 {
 		return x.HandleResult
 	}
 	return 0
+}
+
+func (x *FriendRequests) GetHandleMsg() string {
+	if x != nil {
+		return x.HandleMsg
+	}
+	return ""
 }
 
 type Groups struct {
@@ -292,7 +300,7 @@ func (x *Groups) GetNotificationUid() string {
 
 type GroupMembers struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	GroupId       string                 `protobuf:"bytes,2,opt,name=groupId,proto3" json:"groupId,omitempty"`
 	UserId        string                 `protobuf:"bytes,3,opt,name=userId,proto3" json:"userId,omitempty"`
 	RoleLevel     int32                  `protobuf:"varint,6,opt,name=roleLevel,proto3" json:"roleLevel,omitempty"`
@@ -334,11 +342,11 @@ func (*GroupMembers) Descriptor() ([]byte, []int) {
 	return file_apps_social_rpc_social_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GroupMembers) GetId() int32 {
+func (x *GroupMembers) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *GroupMembers) GetGroupId() string {
@@ -392,7 +400,7 @@ func (x *GroupMembers) GetOperatorUid() string {
 
 type GroupRequests struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	GroupId       string                 `protobuf:"bytes,2,opt,name=groupId,proto3" json:"groupId,omitempty"`
 	ReqId         string                 `protobuf:"bytes,3,opt,name=reqId,proto3" json:"reqId,omitempty"`
 	ReqMsg        string                 `protobuf:"bytes,4,opt,name=reqMsg,proto3" json:"reqMsg,omitempty"`
@@ -401,6 +409,7 @@ type GroupRequests struct {
 	InviterUid    string                 `protobuf:"bytes,7,opt,name=inviterUid,proto3" json:"inviterUid,omitempty"`
 	HandleUid     string                 `protobuf:"bytes,8,opt,name=handleUid,proto3" json:"handleUid,omitempty"`
 	HandleResult  int32                  `protobuf:"varint,9,opt,name=handleResult,proto3" json:"handleResult,omitempty"` // 处理结果
+	HandleTime    int64                  `protobuf:"varint,10,opt,name=handleTime,proto3" json:"handleTime,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -435,11 +444,11 @@ func (*GroupRequests) Descriptor() ([]byte, []int) {
 	return file_apps_social_rpc_social_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GroupRequests) GetId() int32 {
+func (x *GroupRequests) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
 func (x *GroupRequests) GetGroupId() string {
@@ -494,6 +503,13 @@ func (x *GroupRequests) GetHandleUid() string {
 func (x *GroupRequests) GetHandleResult() int32 {
 	if x != nil {
 		return x.HandleResult
+	}
+	return 0
+}
+
+func (x *GroupRequests) GetHandleTime() int64 {
+	if x != nil {
+		return x.HandleTime
 	}
 	return 0
 }
@@ -604,7 +620,7 @@ func (*FriendPutInResp) Descriptor() ([]byte, []int) {
 
 type FriendPutInHandleReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FriendReqId   int32                  `protobuf:"varint,1,opt,name=friendReqId,proto3" json:"friendReqId,omitempty"`
+	FriendReqId   string                 `protobuf:"bytes,1,opt,name=friendReqId,proto3" json:"friendReqId,omitempty"`
 	UserId        string                 `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	HandleResult  int32                  `protobuf:"varint,3,opt,name=handleResult,proto3" json:"handleResult,omitempty"` // 处理结果
 	unknownFields protoimpl.UnknownFields
@@ -641,11 +657,11 @@ func (*FriendPutInHandleReq) Descriptor() ([]byte, []int) {
 	return file_apps_social_rpc_social_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *FriendPutInHandleReq) GetFriendReqId() int32 {
+func (x *FriendPutInHandleReq) GetFriendReqId() string {
 	if x != nil {
 		return x.FriendReqId
 	}
-	return 0
+	return ""
 }
 
 func (x *FriendPutInHandleReq) GetUserId() string {
@@ -945,6 +961,7 @@ func (x *GroupCreateReq) GetCreatorUid() string {
 
 type GroupCreateResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	GroupId       string                 `protobuf:"bytes,1,opt,name=groupId,proto3" json:"groupId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -977,6 +994,13 @@ func (x *GroupCreateResp) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GroupCreateResp.ProtoReflect.Descriptor instead.
 func (*GroupCreateResp) Descriptor() ([]byte, []int) {
 	return file_apps_social_rpc_social_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *GroupCreateResp) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
 }
 
 type GroupPutinReq struct {
@@ -1065,6 +1089,7 @@ func (x *GroupPutinReq) GetInviterUid() string {
 
 type GroupPutinResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	GroupId       string                 `protobuf:"bytes,1,opt,name=groupId,proto3" json:"groupId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1097,6 +1122,13 @@ func (x *GroupPutinResp) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GroupPutinResp.ProtoReflect.Descriptor instead.
 func (*GroupPutinResp) Descriptor() ([]byte, []int) {
 	return file_apps_social_rpc_social_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GroupPutinResp) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
 }
 
 type GroupPutinListReq struct {
@@ -1189,7 +1221,7 @@ func (x *GroupPutinListResp) GetList() []*GroupRequests {
 
 type GroupPutInHandleReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	GroupReqId    int32                  `protobuf:"varint,1,opt,name=groupReqId,proto3" json:"groupReqId,omitempty"`
+	GroupReqId    string                 `protobuf:"bytes,1,opt,name=groupReqId,proto3" json:"groupReqId,omitempty"`
 	GroupId       string                 `protobuf:"bytes,2,opt,name=groupId,proto3" json:"groupId,omitempty"`
 	HandleUid     string                 `protobuf:"bytes,3,opt,name=handleUid,proto3" json:"handleUid,omitempty"`
 	HandleResult  int32                  `protobuf:"varint,4,opt,name=handleResult,proto3" json:"handleResult,omitempty"` // 处理结果
@@ -1229,11 +1261,11 @@ func (*GroupPutInHandleReq) Descriptor() ([]byte, []int) {
 	return file_apps_social_rpc_social_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *GroupPutInHandleReq) GetGroupReqId() int32 {
+func (x *GroupPutInHandleReq) GetGroupReqId() string {
 	if x != nil {
 		return x.GroupReqId
 	}
-	return 0
+	return ""
 }
 
 func (x *GroupPutInHandleReq) GetGroupId() string {
@@ -1273,6 +1305,7 @@ func (x *GroupPutInHandleReq) GetUserAvatarUrl() string {
 
 type GroupPutInHandleResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	GroupId       string                 `protobuf:"bytes,1,opt,name=groupId,proto3" json:"groupId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1305,6 +1338,13 @@ func (x *GroupPutInHandleResp) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GroupPutInHandleResp.ProtoReflect.Descriptor instead.
 func (*GroupPutInHandleResp) Descriptor() ([]byte, []int) {
 	return file_apps_social_rpc_social_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *GroupPutInHandleResp) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
 }
 
 type GroupListReq struct {
@@ -1489,18 +1529,19 @@ const file_apps_social_rpc_social_proto_rawDesc = "" +
 	"\n" +
 	"\x1capps/social/rpc/social.proto\x12\x06social\"\x85\x01\n" +
 	"\aFriends\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x16\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x16\n" +
 	"\x06remark\x18\x03 \x01(\tR\x06remark\x12\x1c\n" +
 	"\taddSource\x18\x04 \x01(\x05R\taddSource\x12\x1c\n" +
-	"\tfriendUid\x18\x05 \x01(\tR\tfriendUid\"\xa6\x01\n" +
+	"\tfriendUid\x18\x05 \x01(\tR\tfriendUid\"\xc4\x01\n" +
 	"\x0eFriendRequests\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x16\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x16\n" +
 	"\x06reqUid\x18\x03 \x01(\tR\x06reqUid\x12\x16\n" +
 	"\x06reqMsg\x18\x04 \x01(\tR\x06reqMsg\x12\x18\n" +
 	"\areqTime\x18\x05 \x01(\x03R\areqTime\x12\"\n" +
-	"\fhandleResult\x18\x06 \x01(\x05R\fhandleResult\"\x81\x02\n" +
+	"\fhandleResult\x18\x06 \x01(\x05R\fhandleResult\x12\x1c\n" +
+	"\thandleMsg\x18\a \x01(\tR\thandleMsg\"\x81\x02\n" +
 	"\x06Groups\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
@@ -1513,7 +1554,7 @@ const file_apps_social_rpc_social_proto_rawDesc = "" +
 	"\fnotification\x18\b \x01(\tR\fnotification\x12(\n" +
 	"\x0fnotificationUid\x18\t \x01(\tR\x0fnotificationUid\"\xec\x01\n" +
 	"\fGroupMembers\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\agroupId\x18\x02 \x01(\tR\agroupId\x12\x16\n" +
 	"\x06userId\x18\x03 \x01(\tR\x06userId\x12\x1c\n" +
 	"\troleLevel\x18\x06 \x01(\x05R\troleLevel\x12\x1a\n" +
@@ -1525,9 +1566,9 @@ const file_apps_social_rpc_social_proto_rawDesc = "" +
 	"inviterUid\x18\t \x01(\tR\n" +
 	"inviterUid\x12 \n" +
 	"\voperatorUid\x18\n" +
-	" \x01(\tR\voperatorUid\"\x83\x02\n" +
+	" \x01(\tR\voperatorUid\"\xa3\x02\n" +
 	"\rGroupRequests\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
 	"\agroupId\x18\x02 \x01(\tR\agroupId\x12\x14\n" +
 	"\x05reqId\x18\x03 \x01(\tR\x05reqId\x12\x16\n" +
 	"\x06reqMsg\x18\x04 \x01(\tR\x06reqMsg\x12\x18\n" +
@@ -1539,7 +1580,11 @@ const file_apps_social_rpc_social_proto_rawDesc = "" +
 	"inviterUid\x18\a \x01(\tR\n" +
 	"inviterUid\x12\x1c\n" +
 	"\thandleUid\x18\b \x01(\tR\thandleUid\x12\"\n" +
-	"\fhandleResult\x18\t \x01(\x05R\fhandleResult\"r\n" +
+	"\fhandleResult\x18\t \x01(\x05R\fhandleResult\x12\x1e\n" +
+	"\n" +
+	"handleTime\x18\n" +
+	" \x01(\x03R\n" +
+	"handleTime\"r\n" +
 	"\x0eFriendPutInReq\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\x16\n" +
 	"\x06reqUid\x18\x03 \x01(\tR\x06reqUid\x12\x16\n" +
@@ -1547,7 +1592,7 @@ const file_apps_social_rpc_social_proto_rawDesc = "" +
 	"\areqTime\x18\x05 \x01(\x03R\areqTime\"\x11\n" +
 	"\x0fFriendPutInResp\"t\n" +
 	"\x14FriendPutInHandleReq\x12 \n" +
-	"\vfriendReqId\x18\x01 \x01(\x05R\vfriendReqId\x12\x16\n" +
+	"\vfriendReqId\x18\x01 \x01(\tR\vfriendReqId\x12\x16\n" +
 	"\x06userId\x18\x02 \x01(\tR\x06userId\x12\"\n" +
 	"\fhandleResult\x18\x03 \x01(\x05R\fhandleResult\"\x17\n" +
 	"\x15FriendPutInHandleResp\",\n" +
@@ -1564,8 +1609,9 @@ const file_apps_social_rpc_social_proto_rawDesc = "" +
 	"\x04icon\x18\x03 \x01(\tR\x04icon\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\x05R\x06status\x12\x1f\n" +
 	"\vcreator_uid\x18\x05 \x01(\tR\n" +
-	"creatorUid\"\x11\n" +
-	"\x0fGroupCreateResp\"\xb1\x01\n" +
+	"creatorUid\"+\n" +
+	"\x0fGroupCreateResp\x12\x18\n" +
+	"\agroupId\x18\x01 \x01(\tR\agroupId\"\xb1\x01\n" +
 	"\rGroupPutinReq\x12\x18\n" +
 	"\agroupId\x18\x02 \x01(\tR\agroupId\x12\x14\n" +
 	"\x05reqId\x18\x03 \x01(\tR\x05reqId\x12\x16\n" +
@@ -1576,22 +1622,24 @@ const file_apps_social_rpc_social_proto_rawDesc = "" +
 	"joinSource\x12\x1e\n" +
 	"\n" +
 	"inviterUid\x18\a \x01(\tR\n" +
-	"inviterUid\"\x10\n" +
-	"\x0eGroupPutinResp\"-\n" +
+	"inviterUid\"*\n" +
+	"\x0eGroupPutinResp\x12\x18\n" +
+	"\agroupId\x18\x01 \x01(\tR\agroupId\"-\n" +
 	"\x11GroupPutinListReq\x12\x18\n" +
 	"\agroupId\x18\x01 \x01(\tR\agroupId\"?\n" +
 	"\x12GroupPutinListResp\x12)\n" +
 	"\x04list\x18\x01 \x03(\v2\x15.social.GroupRequestsR\x04list\"\xd3\x01\n" +
 	"\x13GroupPutInHandleReq\x12\x1e\n" +
 	"\n" +
-	"groupReqId\x18\x01 \x01(\x05R\n" +
+	"groupReqId\x18\x01 \x01(\tR\n" +
 	"groupReqId\x12\x18\n" +
 	"\agroupId\x18\x02 \x01(\tR\agroupId\x12\x1c\n" +
 	"\thandleUid\x18\x03 \x01(\tR\thandleUid\x12\"\n" +
 	"\fhandleResult\x18\x04 \x01(\x05R\fhandleResult\x12\x1a\n" +
 	"\busername\x18\x06 \x01(\tR\busername\x12$\n" +
-	"\ruserAvatarUrl\x18\a \x01(\tR\ruserAvatarUrl\"\x16\n" +
-	"\x14GroupPutInHandleResp\"&\n" +
+	"\ruserAvatarUrl\x18\a \x01(\tR\ruserAvatarUrl\"0\n" +
+	"\x14GroupPutInHandleResp\x12\x18\n" +
+	"\agroupId\x18\x01 \x01(\tR\agroupId\"&\n" +
 	"\fGroupListReq\x12\x16\n" +
 	"\x06userId\x18\x01 \x01(\tR\x06userId\"3\n" +
 	"\rGroupListResp\x12\"\n" +

@@ -3,12 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"qql/pkg/interceptor/rpcserver"
-
 	"qql/apps/social/rpc/internal/config"
 	"qql/apps/social/rpc/internal/server"
 	"qql/apps/social/rpc/internal/svc"
 	"qql/apps/social/rpc/social"
+	"qql/pkg/interceptor/rpcserver"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"

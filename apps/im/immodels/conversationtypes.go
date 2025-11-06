@@ -1,7 +1,7 @@
 package immodels
 
 import (
-	"qql/pkg/constants"
+	"qql/apps/pkg/constants"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"

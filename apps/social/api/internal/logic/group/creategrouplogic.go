@@ -2,9 +2,11 @@ package group
 
 import (
 	"context"
-
+	"qql/apps/im/rpc/imclient"
 	"qql/apps/social/api/internal/svc"
 	"qql/apps/social/api/internal/types"
+	"qql/apps/social/rpc/social"
+	"qql/pkg/ctxdata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,6 +27,23 @@ func NewCreateGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 
 func (l *CreateGroupLogic) CreateGroup(req *types.GroupCreateReq) (resp *types.GroupCreateResp, err error) {
 	// todo: add your logic here and delete this line
-
+	uid := ctxdata.GetUId(l.ctx)
+	res, err := l.svcCtx.Social.GroupCreate(l.ctx, &social.GroupCreateReq{
+		Name:       req.Name,
+		Icon:       req.Icon,
+		Status:     1,
+		CreatorUid: uid,
+	})
+	if err != nil {
+		return
+	}
+	if res.GroupId == "" {
+		return
+	}
+	// 建立会话
+	_, err = l.svcCtx.CreateGroupConversation(l.ctx, &imclient.CreateGroupConversationReq{
+		GroupId:  res.GroupId,
+		CreateId: uid,
+	})
 	return
 }

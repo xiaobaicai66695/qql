@@ -2,12 +2,13 @@ package resultx
 
 import (
 	"context"
+	"fmt"
+	"github.com/peninsula12/easy-im/go-im/pkg/xerr"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	zrpcErr "github.com/zeromicro/x/errors"
 	"google.golang.org/grpc/status"
 	"net/http"
-	"qql/pkg/xerr"
 )
 
 type Response struct {
@@ -19,7 +20,7 @@ type Response struct {
 func Success(data interface{}) *Response {
 	return &Response{
 		Code: 200,
-		Msg:  "",
+		Msg:  "success",
 		Data: data,
 	}
 }
@@ -32,28 +33,28 @@ func Fail(code int, err string) *Response {
 	}
 }
 
-func OkHandler(_ context.Context, v interface{}) any {
+func OKHandler(_ context.Context, v interface{}) any {
 	return Success(v)
 }
 
 func ErrHandler(name string) func(ctx context.Context, err error) (int, any) {
 	return func(ctx context.Context, err error) (int, any) {
-		errcode := xerr.SERVER_COMMON_ERROR
-		errmsg := xerr.ErrMsg(errcode)
+		errCode := xerr.ServerCommonError
+		errMsg := xerr.ErrMsg(errCode)
 
+		fmt.Println(err)
 		causeErr := errors.Cause(err)
 		if e, ok := causeErr.(*zrpcErr.CodeMsg); ok {
-			errcode = e.Code
-			errmsg = e.Msg
+			errCode = e.Code
+			errMsg = e.Msg
 		} else {
 			if gstatus, ok := status.FromError(causeErr); ok {
-				errcode = int(gstatus.Code())
-				errmsg = gstatus.Message()
+				errCode = int(gstatus.Code())
+				errMsg = gstatus.Message()
 			}
 		}
-		//日志记录
-		logx.WithContext(ctx).Errorf("[%s] err %v", name, err)
+		logx.WithContext(ctx).Errorf("【%s】err %v", name, err)
 
-		return http.StatusBadRequest, Fail(errcode, errmsg)
+		return http.StatusBadRequest, Fail(errCode, errMsg)
 	}
 }

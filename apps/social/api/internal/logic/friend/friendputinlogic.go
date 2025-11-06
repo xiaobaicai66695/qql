@@ -3,11 +3,10 @@ package friend
 import (
 	"context"
 	"github.com/pkg/errors"
-	"qql/apps/social/rpc/socialclient"
-	"qql/pkg/ctxdata"
-
 	"qql/apps/social/api/internal/svc"
 	"qql/apps/social/api/internal/types"
+	"qql/apps/social/rpc/socialclient"
+	"qql/pkg/ctxdata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

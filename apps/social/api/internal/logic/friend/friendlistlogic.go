@@ -2,13 +2,12 @@ package friend
 
 import (
 	"context"
+	"github.com/zeromicro/go-zero/core/logx"
 	"qql/apps/social/api/internal/svc"
 	"qql/apps/social/api/internal/types"
 	"qql/apps/social/rpc/socialclient"
 	"qql/apps/user/rpc/userclient"
 	"qql/pkg/ctxdata"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type FriendListLogic struct {
@@ -53,9 +52,9 @@ func (l *FriendListLogic) FriendList(req *types.FriendListReq) (resp *types.Frie
 		return &types.FriendListResp{}, nil
 	}
 
-	userRecords := make(map[string]*userclient.UserEntity, len(users.User))
-	for i, _ := range users.User {
-		userRecords[users.User[i].Id] = users.User[i]
+	userRecords := make(map[string]*userclient.UserEntity, len(users.Users))
+	for i, _ := range users.Users {
+		userRecords[users.Users[i].Id] = users.Users[i]
 	}
 
 	respList := make([]*types.Friends, 0, len(friends.List))

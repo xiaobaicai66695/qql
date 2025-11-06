@@ -2,15 +2,19 @@ package logic
 
 import (
 	"context"
-	"database/sql"
-	"github.com/pkg/errors"
-	"qql/apps/social/socialModels"
-	"qql/pkg/constants"
+	"fmt"
+	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/models"
+	status2 "github.com/peninsula12/easy-im/go-im/pkg/status"
+	"qql/apps/social/rpc/internal/svc"
+	"qql/pkg/status"
+	"qql/pkg/suid"
 	"qql/pkg/xerr"
+
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
 	"time"
 
-	"qql/apps/social/rpc/internal/svc"
-	"qql/apps/social/rpc/social"
+	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/social"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,43 +35,38 @@ func NewFriendPutInLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Frien
 
 func (l *FriendPutInLogic) FriendPutIn(in *social.FriendPutInReq) (*social.FriendPutInResp, error) {
 	// todo: add your logic here and delete this line
-	//申请人是否与目标是好友关系
-	friends, err := l.svcCtx.FriendsModel.FindByUidAndFid(l.ctx, in.UserId, in.ReqUid)
-
-	if err != nil && err != socialModels.ErrNotFound {
-		return nil, errors.Wrapf(xerr.NewDBErr(), "find friends by uid and fid err %v req %v", err, in)
+	fmt.Println("---------------------------------------------------------")
+	var friend models.Friend
+	// 1. 申请人是否与目标是好友关系 此操作不需要使用缓存
+	err := l.svcCtx.CSvc.DB.Where("user_id = ? and friend_uid = ?", in.UserId, in.ReqUid).First(&friend).Error
+	if err == nil {
+		return nil, errors.WithStack(xerr.FriendAlreadyExists)
 	}
-	if friends != nil {
-		return &social.FriendPutInResp{}, err
+	if err != gorm.ErrRecordNotFound {
+		return nil, errors.Wrapf(xerr.NewDBErr(), "find friend by user_id %v and friend_uid %v err %v", in.UserId, in.ReqUid, err)
 	}
-	//是否已经有过申请，
-	friendReqs, err := l.svcCtx.FriendRequestsModel.FindByReqUidAndUserId(l.ctx, in.ReqUid, in.UserId)
-	if err != nil && err != socialModels.ErrNotFound {
-		return nil, errors.Wrapf(xerr.NewDBErr(), "find friends by uid and fid err %v req %v", err, in)
+	fmt.Println("---------------------------------------------------------")
+	// 2. 是否已经有过申请，请申请尚未通过
+	var friendReq models.FriendRequest
+	err = l.svcCtx.CSvc.DB.Where("req_uid = ? and user_id = ? and handle_result != ?", in.ReqUid, in.UserId, status.PassHandlerResult).First(&friendReq).Error
+	if err == nil {
+		return nil, errors.WithStack(xerr.FriendRequestOnPending)
 	}
-
-	if friendReqs != nil {
-		return &social.FriendPutInResp{}, err
+	if err != gorm.ErrRecordNotFound {
+		return nil, errors.Wrapf(xerr.NewDBErr(), "find friend request refused by req_uid %v and user_id %v err %v", in.ReqUid, in.UserId, err)
 	}
-	//创建新的申请记录
-
-	_, err = l.svcCtx.FriendRequestsModel.Insert(l.ctx, &socialModels.FriendRequests{
-		UserId: in.UserId,
-		ReqUid: in.ReqUid,
-		ReqMsg: sql.NullString{
-			String: in.ReqMsg,
-			Valid:  true,
-		},
-		ReqTime: time.Unix(in.ReqTime, 0),
-		HandleResult: sql.NullInt64{
-			Int64: int64(constants.NoHandlerResult),
-			Valid: true,
-		},
-	})
-
+	// 3. 创建申请记录
+	err = l.svcCtx.CSvc.DB.Debug().Create(&models.FriendRequest{
+		ID:           suid.GenerateID(),
+		UserID:       in.UserId,
+		ReqUID:       in.ReqUid,
+		ReqMsg:       in.ReqMsg,
+		ReqTime:      time.Unix(in.ReqTime, 0),
+		HandleResult: status2.HandlerResult(status.PendingHandlerResult),
+		HandledAt:    time.Now(),
+	}).Error
 	if err != nil {
-		return nil, errors.Wrapf(xerr.NewDBErr(), "insert friends err %v req %v", err, in)
+		return nil, errors.Wrapf(xerr.NewDBErr(), "create friend request by user_id %v and req_uid %v err %v", in.UserId, in.ReqUid, err)
 	}
-
 	return &social.FriendPutInResp{}, nil
 }

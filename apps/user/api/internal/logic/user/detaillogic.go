@@ -3,11 +3,10 @@ package user
 import (
 	"context"
 	"github.com/jinzhu/copier"
-	"qql/apps/user/rpc/user"
-	"qql/pkg/ctxdata"
-
 	"qql/apps/user/api/internal/svc"
 	"qql/apps/user/api/internal/types"
+	"qql/apps/user/rpc/user"
+	"qql/pkg/ctxdata"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

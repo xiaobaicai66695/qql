@@ -3,9 +3,10 @@ package logic
 import (
 	"context"
 	"github.com/pkg/errors"
+	"qql/apps/pkg/encrypt"
+	xerr2 "qql/apps/pkg/xerr"
 	"qql/apps/user/models"
 	"qql/pkg/ctxdata"
-	"qql/pkg/encrypt"
 	"qql/pkg/xerr"
 	"time"
 
@@ -16,8 +17,8 @@ import (
 )
 
 var (
-	ErrPhoneNotRegister = xerr.New(xerr.SERVER_COMMON_ERROR, "手机号还没有被注册过")
-	ErrUserPwdError     = xerr.New(xerr.SERVER_COMMON_ERROR, "密码不正确")
+	ErrPhoneNotRegister = xerr.New(xerr2.SERVER_COMMON_ERROR, "手机号还没有被注册过")
+	ErrUserPwdError     = xerr.New(xerr2.SERVER_COMMON_ERROR, "密码不正确")
 )
 
 type LoginLogic struct {

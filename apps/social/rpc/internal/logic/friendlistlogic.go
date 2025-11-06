@@ -2,12 +2,11 @@ package logic
 
 import (
 	"context"
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
-	"qql/pkg/xerr"
-
 	"qql/apps/social/rpc/internal/svc"
+	"qql/apps/social/rpc/models"
 	"qql/apps/social/rpc/social"
+	"qql/pkg/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,15 +27,26 @@ func NewFriendListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Friend
 
 func (l *FriendListLogic) FriendList(in *social.FriendListReq) (*social.FriendListResp, error) {
 	// todo: add your logic here and delete this line
-	friendList, err := l.svcCtx.FriendsModel.ListByUserid(l.ctx, in.UserId)
-	if err != nil {
-		return nil, errors.Wrapf(xerr.NewDBErr(), "list friends err by userid %v req %v", in.UserId, err)
+	// 查询 friend 列表
+	var friendList []models.Friend
+	result := l.svcCtx.CSvc.DB.Where("user_id = ?", in.UserId).Find(&friendList)
+	if result.Error != nil {
+		return nil, errors.Wrapf(xerr.NewDBErr(), "find friend list by user_id %v err %v", in.UserId, result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return nil, errors.WithStack(xerr.FriendListNotFound)
 	}
 
-	var respList []*social.Friends
-	copier.Copy(&respList, &friendList)
+	var friends []*social.Friends
+
+	for _, friend := range friendList {
+		friends = append(friends, &social.Friends{
+			FriendUid: friend.FriendUID,
+			Remark:    friend.Remark,
+		})
+	}
 
 	return &social.FriendListResp{
-		List: respList,
+		List: friends,
 	}, nil
 }

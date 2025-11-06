@@ -2,11 +2,13 @@ package svc
 
 import (
 	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/zrpc"
 	"net/http"
 	"qql/apps/im/immodels"
 	"qql/apps/im/ws/websocket"
+	"qql/apps/pkg/constants"
+	"qql/apps/social/rpc/socialclient"
 	"qql/apps/task/mq/internal/config"
-	"qql/pkg/constants"
 )
 
 type ServiceContext struct {
@@ -15,7 +17,9 @@ type ServiceContext struct {
 	WsClient websocket.Client
 	*redis.Redis
 
+	socialclient.Social
 	immodels.ChatLogModel
+	immodels.ConversationModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -24,6 +28,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:       c,
 		Redis:        redis.MustNewRedis(c.Redisx),
 		ChatLogModel: immodels.MustChatLogModel(c.Mongo.Url, c.Mongo.Db),
+
+		Social: socialclient.NewSocial(zrpc.MustNewClient(c.SocialRpc)),
 	}
 	token, err := svc.GetSystemToken()
 	if err != nil {

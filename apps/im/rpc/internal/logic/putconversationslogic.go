@@ -4,11 +4,10 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"qql/apps/im/immodels"
-	"qql/pkg/constants"
-	"qql/pkg/xerr"
-
 	"qql/apps/im/rpc/im"
 	"qql/apps/im/rpc/internal/svc"
+	"qql/apps/pkg/constants"
+	"qql/pkg/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
