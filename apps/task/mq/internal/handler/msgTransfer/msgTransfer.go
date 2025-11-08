@@ -7,6 +7,7 @@ import (
 	"qql/apps/im/ws/ws"
 	"qql/apps/social/rpc/socialclient"
 	"qql/apps/task/mq/internal/svc"
+	"qql/pkg/status"
 )
 
 type baseMsgTransfer struct {

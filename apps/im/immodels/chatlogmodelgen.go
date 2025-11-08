@@ -2,6 +2,7 @@
 package immodels
 
 import (
+	"fmt"
 	"context"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -16,8 +17,10 @@ type chatLogModel interface {
 	Insert(ctx context.Context, data *ChatLog) error
 	FindOne(ctx context.Context, id string) (*ChatLog, error)
 	Update(ctx context.Context, data *ChatLog) (*mongo.UpdateResult, error)
+	UpdateMarkRead(ctx context.Context,id primitive.ObjectID,readRecords []byte)error
 	Delete(ctx context.Context, id string) (int64, error)
 	ListBySendTime(ctx context.Context, conversationId string, startSendTime, endSendTime, limit int64) ([]*ChatLog, error)
+	ListByMsgIds(ctx context.Context, msgIds []string) ([]*ChatLog, error)
 }
 
 type defaultChatLogModel struct {
@@ -65,6 +68,13 @@ func (m *defaultChatLogModel) Update(ctx context.Context, data *ChatLog) (*mongo
 	return res, err
 }
 
+func (m *defaultChatLogModel)UpdateMarkRead(ctx context.Context,id primitive.ObjectID,readRecords []byte)error{
+	_,err := m.conn.UpdateOne(ctx,bson.M{"_id":id},bson.M{"$set":bson.M{
+		"readRecords":readRecords,
+	}})
+	return err
+}
+
 func (m *defaultChatLogModel) Delete(ctx context.Context, id string) (int64, error) {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -74,12 +84,13 @@ func (m *defaultChatLogModel) Delete(ctx context.Context, id string) (int64, err
 	res, err := m.conn.DeleteOne(ctx, bson.M{"_id": oid})
 	return res, err
 }
+var DefaultChatLogCount int64 = 100
 
 func (m *defaultChatLogModel) ListBySendTime(ctx context.Context, conversationId string, startSendTime, endSendTime, limit int64) ([]*ChatLog, error) {
 	var data []*ChatLog
 
 	opt := options.FindOptions{
-		Limit: &DefaultChatLogLimit,
+		Limit: &DefaultChatLogCount,
 		Sort: bson.M{
 			"sendTime": -1,
 		},
@@ -103,6 +114,36 @@ func (m *defaultChatLogModel) ListBySendTime(ctx context.Context, conversationId
 		}
 	}
 	err := m.conn.Find(ctx, &data, filter, &opt)
+	switch err {
+	case nil:
+		return data, nil
+	case mon.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultChatLogModel) ListByMsgIds(ctx context.Context, msgIds []string) ([]*ChatLog, error) {
+	var data []*ChatLog
+	ids := make([]primitive.ObjectID, 0, len(msgIds))
+	for _, id := range msgIds {
+		oid, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			fmt.Printf("Failed to convert id %s to ObjectID: %v\n", id, err)
+			continue
+		}
+		ids = append(ids, oid)
+	}
+
+	filter := bson.M{
+		"_id": bson.M{
+			"$in": ids,  // 注意这里应该是 $in 而不是 &in
+		},
+	}
+
+	err := m.conn.Find(ctx, &data, filter)
+
 	switch err {
 	case nil:
 		return data, nil

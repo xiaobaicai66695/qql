@@ -7,8 +7,8 @@ import (
 	"qql/apps/im/immodels"
 	"qql/apps/im/rpc/im"
 	"qql/apps/im/rpc/internal/svc"
-	"qql/apps/pkg/constants"
-	"qql/apps/pkg/wuid"
+	"qql/pkg/status"
+	"qql/pkg/suid"
 	"qql/pkg/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -33,10 +33,11 @@ func (l *SetUpUserConversationLogic) SetUpUserConversation(in *im.SetUpUserConve
 	// todo: add your logic here and delete this line
 
 	var res im.SetUpUserConversationResp
-	switch constants.ChatType(in.ChatType) {
-	case constants.SingleChatType:
+	switch status.ChatType(in.ChatType) {
+	case status.SingleChatType:
 		// 生成会话的id
-		conversationId := wuid.CombineId(in.SendId, in.RecvId)
+		conversationId := suid.CombineId(in.SendId, in.RecvId)
+
 		// 验证是否建立过会话
 		conversationRes, err := l.svcCtx.ConversationModel.FindOne(l.ctx, conversationId)
 		if err != nil {
@@ -44,7 +45,7 @@ func (l *SetUpUserConversationLogic) SetUpUserConversation(in *im.SetUpUserConve
 			if err == immodels.ErrNotFound {
 				err = l.svcCtx.ConversationModel.Insert(l.ctx, &immodels.Conversation{
 					ConversationId: conversationId,
-					ChatType:       constants.SingleChatType,
+					ChatType:       status.SingleChatType,
 				})
 
 				if err != nil {
@@ -57,11 +58,11 @@ func (l *SetUpUserConversationLogic) SetUpUserConversation(in *im.SetUpUserConve
 			return &res, nil
 		}
 		// 建立两者的会话
-		err = l.setUpUserConversation(conversationId, in.SendId, in.RecvId, constants.SingleChatType, true)
+		err = l.setUpUserConversation(conversationId, in.SendId, in.RecvId, status.SingleChatType, true)
 		if err != nil {
 			return nil, err
 		}
-		err = l.setUpUserConversation(conversationId, in.RecvId, in.SendId, constants.SingleChatType, false)
+		err = l.setUpUserConversation(conversationId, in.RecvId, in.SendId, status.SingleChatType, false)
 		if err != nil {
 			return nil, err
 		}
@@ -78,7 +79,7 @@ func (l *SetUpUserConversationLogic) SetUpUserConversation(in *im.SetUpUserConve
 }
 
 func (l *SetUpUserConversationLogic) setUpUserConversation(conversationId, userId, recvId string,
-	chatType constants.ChatType, isShow bool) error {
+	chatType status.ChatType, isShow bool) error {
 	// 用户的会话列表
 	conversations, err := l.svcCtx.ConversationsModel.FindByUserId(l.ctx, userId)
 	if err != nil {
@@ -101,7 +102,7 @@ func (l *SetUpUserConversationLogic) setUpUserConversation(conversationId, userI
 	// 添加会话记录
 	conversations.ConversationList[conversationId] = &immodels.Conversation{
 		ConversationId: conversationId,
-		ChatType:       constants.SingleChatType,
+		ChatType:       status.SingleChatType,
 		IsShow:         isShow,
 	}
 

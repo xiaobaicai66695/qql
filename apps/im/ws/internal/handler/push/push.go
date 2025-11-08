@@ -10,6 +10,7 @@ import (
 	"qql/apps/im/ws/internal/svc"
 	"qql/apps/im/ws/websocket"
 	"qql/apps/im/ws/ws"
+	"qql/pkg/status"
 )
 
 func Push(svc *svc.ServiceContext) websocket.HandlerFunc {
@@ -58,7 +59,7 @@ func single(srv *websocket.Server, data *ws.Push, recvId string) error {
 			Content:     data.Content,
 			ReadRecords: data.ReadRecords,
 		},
-	}), recvConn[0])
+	}), recvConn)
 
 }
 

@@ -4,14 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/logx"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"qql/apps/im/immodels"
-	"qql/apps/im/ws/websocket"
 	"qql/apps/im/ws/ws"
 	"qql/apps/task/mq/internal/svc"
 	"qql/apps/task/mq/mq"
-	"qql/pkg/constants"
+	"qql/pkg/bitmap"
 )
 
 type MsgChatTransfer struct {

@@ -44,7 +44,7 @@ func (l *GroupPutInLogic) GroupPutIn(req *types.GroupPutInRep) (resp *types.Grou
 	if res.GroupId == "" {
 		return
 	}
-	_, err = l.svcCtx.SetUpUserConversation(l.ctx, &imclient.SetUpUserConversationReq{
+	_, err = l.svcCtx.Im.SetUpUserConversation(l.ctx, &imclient.SetUpUserConversationReq{
 		SendId:   uid,
 		RecvId:   res.GroupId,
 		ChatType: int32(status.GroupChatType),

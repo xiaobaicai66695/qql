@@ -1,17 +1,16 @@
 package immodels
 
 import (
-	"qql/apps/pkg/constants"
-	"time"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"qql/pkg/status"
+	"time"
 )
 
 type Conversation struct {
 	ID primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 
-	ConversationId string             `bson:"conversationId,omitempty"`
-	ChatType       constants.ChatType `bson:"chatType,omitempty"`
+	ConversationId string          `bson:"conversationId,omitempty"`
+	ChatType       status.ChatType `bson:"chatType,omitempty"`
 	//TargetId       string             `bson:"targetId,omitempty"`
 	IsShow bool     `bson:"isShow,omitempty"`
 	Total  int      `bson:"total,omitempty"`

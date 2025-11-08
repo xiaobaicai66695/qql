@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"qql/apps/im/immodels"
 	"qql/apps/im/ws/websocket"
-	"qql/apps/pkg/constants"
+	"qql/pkg/status"
+
 	"qql/apps/social/rpc/socialclient"
 	"qql/apps/task/mq/internal/config"
 )
@@ -43,5 +44,5 @@ func NewServiceContext(c config.Config) *ServiceContext {
 }
 
 func (svc *ServiceContext) GetSystemToken() (string, error) {
-	return svc.Redis.Get(constants.REDIS_SYSTEM_ROOT_TOKEN)
+	return svc.Redis.Get(status.REDIS_SYSTEM_ROOT_TOKEN)
 }

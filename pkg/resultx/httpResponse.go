@@ -3,12 +3,12 @@ package resultx
 import (
 	"context"
 	"fmt"
-	"github.com/peninsula12/easy-im/go-im/pkg/xerr"
 	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	zrpcErr "github.com/zeromicro/x/errors"
 	"google.golang.org/grpc/status"
 	"net/http"
+	"qql/pkg/xerr"
 )
 
 type Response struct {

@@ -6,7 +6,8 @@ import (
 	"qql/apps/im/immodels"
 	"qql/apps/im/rpc/im"
 	"qql/apps/im/rpc/internal/svc"
-	"qql/apps/pkg/constants"
+	"qql/pkg/status"
+
 	"qql/pkg/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -47,7 +48,7 @@ func (l *PutConversationsLogic) PutConversations(in *im.PutConversationsReq) (*i
 
 		data.ConversationList[s] = &immodels.Conversation{
 			ConversationId: conversation.ConversationId,
-			ChatType:       constants.ChatType(conversation.ChatType),
+			ChatType:       status.ChatType(conversation.ChatType),
 			IsShow:         conversation.IsShow,
 			Total:          int(conversation.Read) + oldTotal,
 			Seq:            conversation.Seq,

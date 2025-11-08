@@ -1,17 +1,27 @@
 package mq
 
 import (
-	"qql/apps/pkg/constants"
+	"qql/pkg/status"
 )
 
 type MsgChatTransfer struct {
-	ConversationId     string `json:"conversationId"`
-	constants.ChatType `json:"chatType"`
-	SendId             string   `json:"sendId"`
-	RecvId             string   `json:"recvId"`
-	RecvIds            []string `json:"recvIds"`
-	SendTime           int64    `json:"sendTime"`
+	MsgId string `mapstructure:"msgId"`
 
-	constants.MType `json:"mType"`
-	Content         string `json:"content"`
+	ConversationId  string `json:"conversationId"`
+	status.ChatType `json:"chatType"`
+	SendId          string   `json:"sendId"`
+	RecvId          string   `json:"recvId"`
+	RecvIds         []string `json:"recvIds"`
+	SendTime        int64    `json:"sendTime"`
+
+	status.MType `json:"status.mType"`
+	Content      string `json:"content"`
+}
+
+type MsgMarkRead struct {
+	ConversationId  string `json:"conversationId"`
+	status.ChatType `json:"chatType"`
+	SendId          string   `json:"sendId"`
+	RecvId          string   `json:"recvId"`
+	MsgIds          []string `json:"msgIds"`
 }
