@@ -2,6 +2,8 @@ package msgTransfer
 
 import (
 	"github.com/zeromicro/go-zero/core/logx"
+	"qql/apps/im/ws/ws"
+	"qql/pkg/status"
 	"sync"
 	"time"
 )

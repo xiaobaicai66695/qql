@@ -7,7 +7,6 @@ import (
 	"github.com/zeromicro/go-zero/rest/token"
 	"net/http"
 	"qql/apps/im/ws/internal/svc"
-	ctxdata2 "qql/apps/pkg/ctxdata"
 	"qql/pkg/ctxdata"
 )
 
@@ -41,7 +40,7 @@ func (j *JwtAuth) Auth(w http.ResponseWriter, r *http.Request) bool {
 		return false
 	}
 
-	*r = *r.WithContext(context.WithValue(r.Context(), ctxdata2.Identify, claims[ctxdata2.Identify]))
+	*r = *r.WithContext(context.WithValue(r.Context(), ctxdata.IdentityKey, claims[ctxdata.IdentityKey]))
 
 	return true
 }

@@ -3,6 +3,7 @@ package configserver
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/HYY-yu/sail-client"
 )
 
 type Config struct {

@@ -6,7 +6,7 @@ import (
 	"qql/apps/im/ws/internal/svc"
 	"qql/apps/im/ws/websocket"
 	"qql/apps/im/ws/ws"
-	"qql/apps/pkg/wuid"
+	"qql/pkg/suid"
 	"time"
 )
 
@@ -26,7 +26,7 @@ func NewConversation(ctx context.Context, srv *websocket.Server, svc *svc.Servic
 
 func (l *Conversation) SingleChat(data *ws.Chat, userId string) error {
 	if data.ConversationId == "" {
-		data.ConversationId = wuid.CombineId(userId, data.RecvId)
+		data.ConversationId = suid.CombineId(userId, data.RecvId)
 	}
 
 	//time.Sleep(time.Minute)

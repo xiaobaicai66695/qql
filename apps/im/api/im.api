@@ -38,21 +38,21 @@ type (
 	ChatLogResp {
 		List []*ChatLog `json:"list"`
 	}
-	GetConversationsReq  {}
+	GetConversationsReq  struct{}
 	GetConversationsResp {
 		ConversationList map[string]*Conversation `json:"conversationList"`
 	}
 	PutConversationsReq {
 		ConversationList map[string]*Conversation `json:"conversationList"`
 	}
-	PutConversationsResp  {}
+	PutConversationsResp     struct{}
 	SetUpUserConversationReq {
 		SendId   string `json:"sendId,omitempty"`
 		RecvId   string `json:"recvId,omitempty"`
 		ChatType int32  `json:"ChatType,omitempty"`
 	}
-	setUpUserConversationResp  {}
-	GetChatLogReadRecordsReq {
+	setUpUserConversationResp struct{}
+	GetChatLogReadRecordsReq  {
 		MsgId string `json:"msgId"`
 	}
 	GetChatLogReadRecordsResp {
@@ -69,20 +69,19 @@ service im {
 	@doc "根据用户获取聊天记录"
 	@handler getChatLog
 	get /chatlog (ChatLogReq) returns (ChatLogResp)
-
+	
 	@handler getChatLogReadRecords
 	get /chatlog/readRecords (GetChatLogReadRecordsReq) returns (GetChatLogReadRecordsResp)
-
+	
 	@doc "建立会话"
 	@handler setUpUserConversation
 	post /setup/conversation (SetUpUserConversationReq) returns (setUpUserConversationResp)
-
+	
 	@doc "获取会话"
 	@handler getConversations
 	get /conversation (GetConversationsReq) returns (GetConversationsResp)
-
+	
 	@doc "更新会话"
 	@handler putConversations
 	put /conversation (PutConversationsReq) returns (PutConversationsResp)
 }
-
