@@ -2,6 +2,9 @@ Name: social
 Host: 0.0.0.0
 Port: 8081
 
+Redisx:
+  Host: 127.0.0.1
+  Pass: "210618"
 SocialRpc:
   Etcd:
     Hosts:

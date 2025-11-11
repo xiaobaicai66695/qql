@@ -1,6 +1,10 @@
 Name: user
 Host: 0.0.0.0
 Port: 8080
+
+Redisx:
+  Host: 127.0.0.1
+  Pass: "210618"
 UserRpc:
   Etcd:
     Hosts:

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/jinzhu/copier"
 	"qql/apps/user/rpc/user"
+	"qql/pkg/status"
 
 	"qql/apps/user/api/internal/svc"
 	"qql/apps/user/api/internal/types"
@@ -37,5 +38,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 
 	var res types.LoginResp
 	copier.Copy(&res, loginResp)
+
+	l.svcCtx.Redis.HsetCtx(l.ctx, status.REDIS_ONLINE_USER, loginResp.Id, "1")
 	return &res, nil
 }

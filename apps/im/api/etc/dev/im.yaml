@@ -5,20 +5,20 @@ Port: 8082
 ImRpc:
   Etcd:
     Hosts:
-      - 118.178.120.11:3379
+      - 127.0.0.1:2379
     Key:
       im.rpc
 
 SocialRpc:
   Etcd:
     Hosts:
-      - 118.178.120.11:3379
+      - 127.0.0.1:2379
     Key:
       social.rpc
 UserRpc:
   Etcd:
     Hosts:
-      - 118.178.120.11:3379
+      - 127.0.0.1:2379
     Key:
       user.rpc
 
