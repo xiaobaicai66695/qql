@@ -2,22 +2,20 @@ package logic
 
 import (
 	"context"
-	"database/sql"
-	"errors"
-	"qql/apps/pkg/encrypt"
-	"qql/apps/pkg/wuid"
+	"github.com/pkg/errors"
+	"qql/pkg/encrypy"
+	"qql/pkg/utils"
+
 	"qql/apps/user/models"
 	"qql/pkg/ctxdata"
+	"qql/pkg/suid"
+	"qql/pkg/xerr"
 	"time"
 
 	"qql/apps/user/rpc/internal/svc"
 	"qql/apps/user/rpc/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
-)
-
-var (
-	ErrPhoneIsRegister = errors.New("手机号已经被注册过")
 )
 
 type RegisterLogic struct {
@@ -35,51 +33,51 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, error) {
-	// 注册功能
-	userEntity, err := l.svcCtx.UserModels.FindByPhone(l.ctx, in.Phone)
-	if err != nil && err != models.ErrNotFound {
-		return nil, err
+	u := models.User{}
+	var err error
+	// 1.检查用户是否存在(phone)
+	err = l.svcCtx.CSvc.GetUserByPhone(&u, in.Phone)
+	if err != nil {
+		if u.ID == "" {
+			return nil, errors.WithStack(xerr.PhoneNotFound)
+		}
+		return nil, errors.Wrapf(xerr.NewDBErr(), "find api by phone "+
+			" err %v req %v", err, in.Phone)
 	}
 
-	if userEntity != nil {
-		return nil, ErrPhoneIsRegister
-	}
-
-	userEntity = &models.Users{
-		Id:       wuid.GenUid(l.svcCtx.Config.Mysql.DataSource),
+	// 2.定义新增用户
+	U := &models.User{
+		ID:       suid.GenerateID(),
 		Avatar:   in.Avatar,
 		Nickname: in.Nickname,
 		Phone:    in.Phone,
-		Sex: sql.NullInt64{
-			Int64: int64(in.Sex),
-			Valid: true,
-		},
+		Status:   utils.ConvertToInt8(0),
+		Sex:      utils.ConvertToInt8(in.Sex),
 	}
 
-	if len(in.Password) > 0 {
-		genPassword, err := encrypt.GenPasswordHash([]byte(in.Password))
+	if in.Password != "" {
+		pass, err := encrypy.GenPasswordHash([]byte(in.Password))
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrapf(xerr.NewServerCommonErr(), "passwordHash gen err %v", err)
 		}
-		userEntity.Password = sql.NullString{
-			String: string(genPassword),
-			Valid:  true,
-		}
+		U.Password = string(pass)
 	}
-
-	_, err = l.svcCtx.UserModels.Insert(l.ctx, userEntity)
+	// 3.保存用户
+	err = l.svcCtx.CSvc.CreateUser(U)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(xerr.NewDBErr(), "save api %v failed ,err %v", in, err)
 	}
 
+	// 4. 生成token
 	now := time.Now().Unix()
-	token, err := ctxdata.GetJwtToken(l.svcCtx.Config.Jwt.AccessSecret, now, l.svcCtx.Config.Jwt.AccessExpire, userEntity.Id)
+	token, err := ctxdata.GetJwtToken(l.svcCtx.Config.Jwt.AccessSecret, now, l.svcCtx.Config.Jwt.AccessExpire, u.ID)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(xerr.NewDBErr(), "extdata get jwt token"+
+			" err %v", in.Phone)
 	}
-
 	return &user.RegisterResp{
 		Token:  token,
 		Expire: now + l.svcCtx.Config.Jwt.AccessExpire,
 	}, nil
+
 }

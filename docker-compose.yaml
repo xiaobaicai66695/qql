@@ -1,8 +1,6 @@
-version: '3'
-
 services:
   etcd:
-    image: bitnami/etcd:3.4.15
+    image: kubesphere/etcd:3.6.4-0
     container_name: etcd
     ports:
       - "3379:2379"
@@ -10,44 +8,190 @@ services:
     environment:
       - ETCD_ENABLE_V2=true
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://192.168.117.24:3379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_NAME=etcd
     volumes:
-      - ./components/etcd/data:/bitnami/etcd/data
-      - ./components/etcd/logs:/bitnami/etcd/logs
+      - ./components/etcd/data:/kubesphere/etcd/data
+      - ./components/etcd/logs:/kubesphere/etcd/logs
+    restart: always
     networks:
-      easy-chat:
-
+      - easy-chat
+    command: >
+      etcd
+      --data-dir=/kubesphere/etcd/data
+      --listen-peer-urls=http://0.0.0.0:2380
+      --initial-advertise-peer-urls=http://etcd:2380
+      --initial-cluster=etcd=http://etcd:2380
+      --initial-cluster-token=etcd-cluster
+      --initial-cluster-state=new
   redis:
     image: redis:alpine3.18
     ports:
-      - 16379:6379
+      - "16379:6379"
     container_name: redis
     volumes:
       - ./components/redis/data:/data
-      - ./components/redis/config/redis.conf:/usr/local/redis/config/redis.conf
+      - ./components/redis/config/redis.conf:/usr/local/redis/conf/redis.conf
     environment:
       TZ: Asia/Shanghai
     restart: always
     networks:
-      easy-chat:
-    command: redis-server --requirepass easy-chat --appendonly yes
+      - easy-chat
+    command: redis-server --requirepass 210618 --appendonly yes
 
   mysql:
-    image: mysql:5.7
+    image: mysql:8.0.34
     ports:
-      - 13306:3306
+      - "13306:3306"
     container_name: mysql
     volumes:
       - ./components/mysql/data:/var/lib/mysql
       - /etc/localtime:/etc/localtime
     environment:
-      MYSQL_ROOT_PASSWORD: qql
+      MYSQL_ROOT_PASSWORD: 210618
     restart: always
     networks:
-      easy-chat:
+      - easy-chat
+  mongo:
+    image: mongo:4.0
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: qql
+    ports:
+      - "47017:27017"
+    volumes:
+      - ./components/mongo/data:/data/db
+      - /etc/localtime:/etc/localtime
+    restart: always
+    networks:
+      - easy-chat
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    container_name: zookeeper
+    volumes:
+      - /etc/localtime:/etc/localtime
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    restart: always
+    ports:
+      - "9092:9092"
+    environment:
+      TZ: Asia/Shanghai
+      KAFKA_BROKER_ID: 0
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "ws2ms_chat:8:1,ms2ps_chat:8:1,msg_to_mongo:8:1"
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://118.178.120.11:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_LISTENERS: INSIDE://:9092
+      KAFKA_HEAP_OPTS: "-Xmx512M -Xms256M"
+    depends_on:
+      - zookeeper
+
+  apisix-dashboard:
+    image: apache/apisix-dashboard:3.0.1-alpine
+    container_name: apisix-dashboard
+    restart: always
+    depends_on:
+      - etcd
+    volumes:
+      - ./components/apisix-dashboard/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+      - ./components/apisix-dashboard/schema.json:/usr/local/apisix-dashboard/api/conf/schema.json
+    ports:
+      - "9000:9000"
+    networks:
+      - easy-chat
+
+  apisix:
+    image: apache/apisix:latest
+    container_name: apisix
+    restart: always
+    depends_on:
+      - etcd
+      - apisix-dashboard
+    volumes:
+      - ./components/apisix/conf/config.yaml:/usr/local/apisix/conf/config.yaml
+#      - ./components/apisix/logs:/usr/local/apisix/logs
+#      - ./components/apisix/cert/ssl_PLACE_HOLDER.crt:/usr/local/apisix/conf/cert/ssl_PLACE_HOLDER.crt
+#      - ./components/apisix/cert/ssl_PLACE_HOLDER.key:/usr/local/apisix/conf/cert/ssl_PLACE_HOLDER.key
+    ports:
+      - "9180:9180/tcp"
+      - "9080:9080/tcp"
+      - "9091:9091/tcp"
+      - "9443:9443/tcp"
+      - "9093:9092/tcp"
+    networks:
+      - easy-chat
+
+  sail:
+    image: ccr.ccs.tencentyun.com/hyy-yu/sail:latest
+    container_name: sail
+    ports:
+      - "8108:8108"
+    volumes:
+      - "./components/sail/compose-cfg.toml:/app/cfg.toml"
+    restart: always
+    platform: linux/arm64
+
+  jeager:
+    image: jaegertracing/all-in-one:latest
+    container_name: jeager
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+    restart: always
+    networks:
+      - easy-chat
+
+  elasticsearch:
+    image: elasticsearch:7.17.4
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./components/elasticsearch/data:/usr/share/elasticsearch/data
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    container_name: elasticsearch
+    restart: always
+    environment:
+      - 'cluster.name=elasticsearch'
+      - 'discovery.type=single-node'
+      - 'ES_JAVA_OPTS=-Xms1024m -Xmx1024m'
+    networks:
+      - easy-chat
+
+  kibana:
+    image: kibana:7.17.4
+    container_name: kibana
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./components/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - '5601:5601'
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    networks:
+      - easy-chat
 
 networks:
   easy-chat:
+    name: easy-chat
     driver: bridge

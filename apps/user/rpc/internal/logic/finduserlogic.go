@@ -2,8 +2,10 @@ package logic
 
 import (
 	"context"
-	"github.com/jinzhu/copier"
+	"fmt"
+	"github.com/pkg/errors"
 	"qql/apps/user/models"
+	"qql/pkg/xerr"
 
 	"qql/apps/user/rpc/internal/svc"
 	"qql/apps/user/rpc/user"
@@ -27,28 +29,42 @@ func NewFindUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FindUser
 
 func (l *FindUserLogic) FindUser(in *user.FindUserReq) (*user.FindUserResp, error) {
 	// todo: add your logic here and delete this line
-	var (
-		userEntitys []*models.Users
-		err         error
-	)
+	var users = make([]models.User, 1) // 第一个位置留给 phone、name 查询
+	var userEntities []*user.UserEntity
+
 	if in.Phone != "" {
-		userEntity, err := l.svcCtx.UserModels.FindByPhone(l.ctx, in.Phone)
-		if err == nil {
-			userEntitys = append(userEntitys, userEntity)
+		err := l.svcCtx.CSvc.GetUserByPhone(&users[0], in.Phone)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to find api by phone: %s", in.Phone)
+		}
+	} else if len(in.Ids) > 0 {
+		users = nil
+		err := l.svcCtx.CSvc.GetUserByIds(&users, in.Ids)
+		if err != nil {
+			fmt.Printf("\n\n\n %v \n\n\n", err)
+			return nil, errors.Wrapf(err, "failed to find users by IDs: %v", in.Ids)
 		}
 	} else if in.Name != "" {
-		userEntitys, err = l.svcCtx.UserModels.FindByName(l.ctx, in.Name)
-	} else if len(in.Ids) > 0 {
-		userEntitys, err = l.svcCtx.UserModels.FindByids(l.ctx, in.Ids)
+		err := l.svcCtx.CSvc.GetUserByName(&users[0], in.Name)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to find users by name: %s", in.Name)
+		}
+	} else {
+		return nil, errors.WithStack(xerr.ParamError)
 	}
 
-	if err != nil {
-		return nil, err
+	userEntities = make([]*user.UserEntity, len(users))
+
+	for index, u := range users {
+		userEntities[index] = &user.UserEntity{
+			Id:       u.ID,
+			Avatar:   u.Avatar,
+			Nickname: u.Nickname,
+			Phone:    u.Phone,
+			Status:   int32(*u.Status),
+			Sex:      int32(*u.Sex),
+		}
 	}
-	var resp []*user.UserEntity
-	copier.Copy(&resp, &userEntitys)
-	
-	return &user.FindUserResp{
-		User: resp,
-	}, nil
+
+	return &user.FindUserResp{Users: userEntities}, nil
 }

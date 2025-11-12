@@ -18,7 +18,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 
-		Redis: redis.MustNewRedis(c.RedisConf),
+		Redis: redis.MustNewRedis(c.Redisx),
 		User:  userclient.NewUser(zrpc.MustNewClient(c.UserRpc)),
 	}
 }

@@ -9,7 +9,7 @@ import (
 type Config struct {
 	rest.RestConf
 
-	redis.RedisConf
+	Redisx  redis.RedisConf
 	UserRpc zrpc.RpcClientConf
 	JwtAuth struct {
 		AccessSecret string

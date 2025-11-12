@@ -2,7 +2,8 @@ package logic
 
 import (
 	"context"
-	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/models"
+	"qql/apps/user/models"
+
 	"github.com/pkg/errors"
 	"qql/pkg/ctxdata"
 	"qql/pkg/encrypy"

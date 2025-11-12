@@ -6,6 +6,7 @@ import (
 	"qql/apps/im/immodels"
 	"qql/apps/im/rpc/im"
 	"qql/apps/im/rpc/internal/svc"
+	"qql/pkg/status"
 	"qql/pkg/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"

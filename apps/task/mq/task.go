@@ -10,7 +10,7 @@ import (
 	"qql/apps/task/mq/internal/svc"
 )
 
-var configFile = flag.String("f", "etc/dev/task.yaml", "the config file")
+var configFile = flag.String("f", "./apps/task/mq/etc/dev/task.yaml", "the config file")
 
 func main() {
 	flag.Parse()

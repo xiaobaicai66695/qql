@@ -4,7 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/peninsula12/easy-im/go-im/apps/user/rpc/models"
+	"qql/apps/user/models"
+
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 	"qql/apps/user/rpc/internal/config"

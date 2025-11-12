@@ -15,7 +15,7 @@ import (
 	"qql/pkg/interceptor/rpcserver"
 )
 
-var configFile = flag.String("f", "etc/dev/user.yaml", "the config file")
+var configFile = flag.String("f", "./apps/social/rpc/etc/dev/user.yaml", "the config file")
 
 func main() {
 	flag.Parse()

@@ -3,8 +3,10 @@ package logic
 import (
 	"context"
 	"fmt"
-	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/models"
-	status2 "github.com/peninsula12/easy-im/go-im/pkg/status"
+	"qql/apps/social/rpc/models"
+	"qql/apps/social/rpc/social"
+	status2 "qql/pkg/status"
+
 	"qql/apps/social/rpc/internal/svc"
 	"qql/pkg/status"
 	"qql/pkg/suid"
@@ -13,8 +15,6 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"time"
-
-	"github.com/peninsula12/easy-im/go-im/apps/social/rpc/social"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
